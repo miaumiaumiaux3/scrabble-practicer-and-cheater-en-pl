@@ -1,2 +1,5 @@
-PS F:\Documents\scrabble dabble> git pull origin main
+git pull origin main //because i can't just like normally oull for some reason
 git checkout -b <branchname> //make new branch
+
+//for emergencies only
+git push origin main
