@@ -52,3 +52,4 @@ print(tilebag)
 '''this is the part where it branches, it can either slowly deplete the bag to 'finish' the game, 
 or it can just randomize and grab the first 7.... tbh both are easy, so let's have it deplete like a 'real' game'''
 
+#give 7 tiles to player's hand and pop those tiles out of tilebag
