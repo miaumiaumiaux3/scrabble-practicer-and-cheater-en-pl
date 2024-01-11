@@ -1,0 +1,2 @@
+PS F:\Documents\scrabble dabble> git pull origin main
+git checkout -b <branchname> //make new branch
