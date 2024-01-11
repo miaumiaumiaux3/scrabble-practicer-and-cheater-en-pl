@@ -3,3 +3,5 @@ git checkout -b <branchname> //make new branch
 
 //for emergencies only
 git push origin main
+
+git merge <merge_to> <merge_from>
