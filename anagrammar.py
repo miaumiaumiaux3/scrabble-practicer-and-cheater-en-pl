@@ -3,8 +3,16 @@ import random
 #import letter_scores
 
 #choose language, global var AF
-language = 'en' #267,753 words
-#language = 'pl' #works but WARNING because of cases and genders, there are over 3 MILLION entries 
+#language = 'en' #267,753 words
+language = 'pl' #works but WARNING because of cases and genders, there are over 3 MILLION entries 
+
+class GameLanguage:
+    def __init__(self, language, filepath, letters, letterscores):
+        self.language = language
+        self.filepath = filepath
+        self.letters = letters
+        self.letterscores = letterscores
+
 
 #dict of all letter points (don't think there's a way to combine it and probs not worth)
 letter_points_en = {
@@ -48,10 +56,10 @@ class Player:
 def create_lexicon():
     if language == 'en':
         #Read from sowpods.txt and populate list
-        with open ('sowpods.txt', 'r') as file:
+        with open ('sowpods.txt', 'r', encoding = 'utf-8') as file:
             return [line.rstrip() for line in file] #rstrip to remove whitespace line by line
     elif language == 'pl':
-        with open ('slowa.txt', 'r') as file:
+        with open ('slowa.txt', 'r', encoding = 'utf-8') as file:
             return [line.rstrip() for line in file] 
     else:
         #invalid language, but should be impossible because global var
@@ -73,6 +81,9 @@ def fill_tilebag():
 
 
 def valid_word_checker(tiles, wilds, word):
+    if len(word) > len(tiles): #if the length is wrong, skip everything because obv that's impossible
+        return -1
+    
     wordscore = 0
     miss_counter = 0 
     temp_tiles = tiles.copy() #tiles[:] or tile.copy() or list(tiles) is necessary BECAUSE OTHERWISE = IS JUST IS REFERENCE TO THE FIRST LIST WTF WHY
@@ -100,16 +111,16 @@ def valid_word_checker(tiles, wilds, word):
 def validate_and_score_words(tiles, lexicon):
     valid_words = {}
     wordscore = 0
-    
+    temp_tiles = tiles.copy()
     #count wilds, remove them from list, now they exist only as a concept
-    wilds = tiles.count('?')
-    while tiles.count('?') > 0: #loop because .remove only removes first instance of element
-        tiles.remove('?')
+    wilds = temp_tiles.count('?')
+    while temp_tiles.count('?') > 0: #loop because .remove only removes first instance of element
+        temp_tiles.remove('?')
 
     #nested for loops checking each word of the dictionary, then each letter
     for word in lexicon:
         #print(f"word {word} tiles {tiles} temptiles {temp_tiles}")
-        wordscore = valid_word_checker(tiles, wilds, word)
+        wordscore = valid_word_checker(temp_tiles, wilds, word)
         if wordscore > 0:
             valid_words[word] = wordscore
 
@@ -144,3 +155,18 @@ print(dict(sorted(validated_words.items(), key=lambda item: item[1], reverse=Tru
 #current error
 #['e', 'e', 'c', 'b', 'a', 'a', 'd']
 #{'abecedarian': 12, 'abecedarians': 12, <- literally impossible, so why is it passing? do we need to do a length check?
+#for now I'm doing a length check, and if that stops working in a future iteration, I'll come up with another solution
+
+#current error
+#['r', 'm', 'i', 'i', 'i', 'a', 'ł']
+#{'armii': 6, 'ramii': 6, 'amii': 5, 'miar': 5, 'mira': 5, 'rami': 5, 'arii': 4, 'ima': 4, 'mai': 4, 'mar': 4, 'mir': 4, 'ram': 4, 'air': 3, 'am': 3, 'iii': 3, 'im': 3, 'ma': 3, 'mi': 3, 'rai': 3, 'ar': 2, 'ii': 2}
+#where is "miał" ?
+#ERROR INLOVES POLSKI ZNACZKI
+
+#['c', 'ł', 'm', 'a', 'm', 'ź', 'y']
+#{'cyma': 7, 'macy': 7, 'mamy': 7, 'myca': 7, 'cym': 6, 'myc': 6, 'mym': 6, 'mac': 5, 'mam': 5, 'may': 5, 'yam': 5, 'my': 4, 'am': 3, 'ma': 3} 
+#NIE MA ANI ł ANI Ź
+
+#FIX WAS SUPER EASY!! these kinds of character are EXACTLY why it's worth opening the file with encoding = 'utf-8' SOLVED YAYY
+#['ż', 'ó', 'w', 'ź', 'j', 'z', 'w'] 
+#{'wwóź': 16, 'zwóź': 16, 'wóź': 15, 'zwój': 10, 'wwóz': 8, 'zwów': 8, 'wóz': 7, 'ów': 6}
