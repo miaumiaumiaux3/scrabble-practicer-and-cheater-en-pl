@@ -1,11 +1,11 @@
 
 import random
-#import letter_scores
 
 #langauges movedto classes
 class English(): #267,753 words
     language = 'en'
-    filepath = 'sowpods.txt' 
+    filepath = 'sowpods.txt'
+    vowels = 'aeiou'
     bag_of_letter_tiles = list('?'*2 + 'e'*12 + 'a'*9 + 'i'*9 + 'o'*8 + 'n'*6 + 'r'*6 + 't'*6 + 'l'*4 
                             + 's'*4 + 'u'*4 + 'd'*4 + 'g'*3 + 'b'*2 + 'c'*2 + 'm'*2 + 'p'*2 + 'f'*2 
                             + 'h'*2 + 'v'*2 + 'w'*2 + 'y'*2 + 'kjxqz')
@@ -23,6 +23,7 @@ class English(): #267,753 words
 class Polish(): #works but WARNING because of cases and genders, there are over 3 MILLION entries 
     language = 'pl'
     filepath = 'slowa.txt'
+    vowels = 'aeiouąęóy'
     bag_of_letter_tiles = list('?'*2 + 'a'*9 + 'i'*8 +'e'*7 + 'o'*6 + 'n'*5 + 'z'*5 + 'r'*4 + 's'*4 + 'w'*4  +'y'*4 
                     + 'c'*3 + 'd'*3 + 'k'*3 + 'l'*3 + 'm'*3 + 'p'*3 + 't'*3 + 'b'*2 + 'g'*2 + 'h'*2 
                     + 'j'*2 + 'ł'*2 + 'u'*2 + 'ąęfóśżćńź')
@@ -39,6 +40,8 @@ class Polish(): #works but WARNING because of cases and genders, there are over 
 
 
 class Player:
+    tilebag = ['if this text is showing, you fucked up'] #shared by all players
+
     def __init__(self, name ='Player'):
         self.name = name
         self.hand = []
@@ -98,60 +101,152 @@ def validate_and_score_words(tiles, lexicon):
 
     return valid_words #dict of word:score
 
+def deal_entire_hand(player): 
+    #print("reshuffling tiles") #debugging
+    #print(f'Your hand: {player1.hand}')
+    if len(player.tilebag) > 0: #if hand already has tiles
+        Player.tilebag.extend(player.hand) #put tiles back in tilebag
+        player.hand = [] #delete duplicates in hand to make empty hand
+    #give 7 fresh tiles to player's hand and pop those tiles out of tilebag
+    random.shuffle(Player.tilebag) #shake tilebag
+    player.hand = Player.tilebag[0:7] #fill hand
+    Player.tilebag = Player.tilebag[7:]
 
-#ok, let's get started!
-desired_language = input("English(en) or Polish(pl)?\n")
-if desired_language == 'en' or desired_language.lower() == 'english':
+
+def vowel_count(tiles):
+    return sum(tiles.count(vowel) for vowel in language.vowels)
+
+
+def check_vowels(player):
+    ##make sure that number of vowels is between 2-4, ya know, an actually reasonable number for both en and pl (and others)
+    vowels_in_hand = vowel_count(player.hand)
+    #print(vowels_in_hand)
+    while (vowels_in_hand < 2 or vowels_in_hand > 4): #(and len(tilebag) > 6 and vowels_in_tilebag > 3) #repeat until valid values
+        deal_entire_hand(player)
+        vowels_in_hand = vowel_count(player.hand)
+
+
+###############################################################
+#ok, let's get started! This only needs to happen once at the beginning of the game
+###############################################################
+desired_language = input("1. English(en)\n2. Polish(pl)\n--> ")
+if desired_language == '1' or desired_language.lower() == 'en' or desired_language.lower() == 'english':
     language = English()
-elif desired_language == 'pl' or desired_language.lower() == 'polish' or desired_language.lower() == 'polski':
+elif desired_language == '2' or desired_language == 'pl' or desired_language.lower() == 'polish' or desired_language.lower() == 'polski':
     language = Polish()
 else:
     print('Invalid input')
-
-print('Scrabble Practice! Try to get the highest scoring word from your available tiles!') #until the tiles run out? Can do but later
+    exit()
 
 #read dictionary of valid words from file and put into list
 lexicon = create_lexicon()
 
-#create instance of tilebag
-tilebag = fill_tilebag() 
-random.shuffle(tilebag) #shake tilebag
-#print(tilebag)
+##################################################################
 
-'''now we create a player to give tiles that will refill from the tilebag as they're used until tilebag is empty and no valid words remain in hand -- aka endgame'''
-
-#create player
-player1 = Player() #if more than one player, on creation of second player, set player1 name to Player1
-
-#give 7 tiles to player's hand and pop those tiles out of tilebag
-player1.hand = tilebag[0:7]
-tilebag = tilebag[7:]
-print(f'Your hand: {player1.hand}')
-#print(tilebag)
-
-typed_word = input("Type a word to score!\n")
-
-validated_words = validate_and_score_words(player1.hand, lexicon)
-
-if len(validated_words) == 0:
-    print("Whoa, there are no valid words in this hand. That's not supposed to happen!")
-elif typed_word in validated_words: 
-    wordscore = validated_words[typed_word]
-    print(f"Nice! You scored {wordscore} points!")
-    
-    #create list of all values (possible scores) from validated words, and use set() to remove duplicates
-    possible_scores = list(set(validated_words.values())) 
-    possible_scores.sort(reverse=True)
-
-    #determine rank of typed_word, compared to other possible scores
-    rank = possible_scores.index(wordscore) + 1
-    if rank == possible_scores[0]:
-        print("Wow! You nailed it! You hit the top rank of points with the maximum possible score!")
-    else:
-        print(f'Your word score rank was {rank}! (The top score at rank 1 was: {possible_scores[0]})')
-else:
-    print('Invalid word...')
-    print('Here were all the possible words, sorted from highest to lowest score:')
+def start_cheating(player):
+    player.hand = list(input("Enter the tiles you want to check words for (? for a blank tile):\n--> "))[:]
+    if len(player.hand) > 15:
+        print("Too many tiles, that's bigger than the 15x15 board")
+    #add check if all char are valid tiles
+    validated_words = validate_and_score_words(player.hand, lexicon)
+    print('Here are all the possible words, sorted from highest to lowest score:')
     print(dict(sorted(validated_words.items(), key=lambda item: item[1], reverse=True)))
 
+def setup_practice(player):
+    validated_words = {}
+    #create initial instance of tilebag
+    temp_tilebag = fill_tilebag() #have to make a temporary variable here or everything breaks
+    Player.tilebag = temp_tilebag.copy() 
+    #print(Player.tilebag)
 
+    deal_entire_hand(player)
+
+    #create dict of valid words and scores from the tiles, guarentee at least one valid word
+    # while len(validated_words) == 0:
+    #     deal_entire_hand(player)
+    #     validated_words = validate_and_score_words(player.hand, lexicon)
+        
+    #make sure hand has between 2-4 vowels, because otherwise the word options are WICKED BORING    
+    check_vowels(player)
+    validated_words = validate_and_score_words(player.hand, lexicon)
+
+    print('Scrabble Practice! Try to get the highest scoring word from your available tiles!') #until the tiles run out? Can add this mode later if desired
+    start_practice(player, validated_words, '1')
+
+
+def start_practice(player, validated_words, play_mode):
+    if play_mode == '1':
+        print(f'Your hand: {player.hand}')
+        typed_word = input("Type a word to score!\n--> ").lower()
+
+        if typed_word in validated_words: 
+            wordscore = validated_words[typed_word]
+            print(f"Nice! You scored {wordscore} points!")
+            
+            #create list of all values (possible scores) from validated words, and use set() to remove duplicates
+            possible_scores = list(set(validated_words.values())) 
+            possible_scores.sort(reverse=True)
+
+            #determine rank of typed_word, compared to other possible scores
+            rank = possible_scores.index(wordscore) + 1
+            if rank == possible_scores[0]:
+                print("Wow! You nailed it! You hit the top rank of points with the maximum possible score!")
+                play_mode = input('1. Try again\n2. Play again from scratch\n3. Show all possible words for this hand\n4. Quit\n--> ')
+            else:
+                print(f'Your word score rank was {rank}! (The top score at rank 1 was: {possible_scores[0]})')
+                play_mode = input('1. Try again\n2. Play again from scratch\n3. Show all possible words for this hand\n4. Quit\n--> ')
+            start_practice(player, validated_words, play_mode)
+        
+        else:
+            print('Invalid word... try again')
+            # print('Here were all the possible words, sorted from highest to lowest score:') #only here to debug
+            # print(dict(sorted(validated_words.items(), key=lambda item: item[1], reverse=True)))
+            start_practice(player, validated_words, '1')
+    
+    elif play_mode == '2':
+        setup_practice(player)
+    
+    elif play_mode == '3':
+        print('Here were all the possible words, sorted from highest to lowest score:')
+        print(dict(sorted(validated_words.items(), key=lambda item: item[1], reverse=True)))
+        play_mode = input("2. Play again\n4. Exit program\n--> ")
+        start_practice(player, validated_words, play_mode)
+    
+    elif play_mode == '4':
+        exit()
+    else:
+        print("Sorry, I don't understand")
+
+##########################################################################################
+#create player
+player1 = Player() #if more than one player, on creation of second player, set player1 name to Player1
+#####player 1 hardcodes from here on, because we don't have other players
+
+def start_program():
+    mode = input("Do you want to practice making words from hands, or do you want to cheat?\n1. Practice\n2. Cheat\n--> ")
+    if mode == '1':
+        words = {}
+        start_practice(player1, words, '2')
+    elif mode == '2':
+        start_cheating(player1)
+    else:
+        print("Sorry, I don't understand...")
+        start_program()
+
+
+
+start_program()
+
+
+        
+
+
+
+
+
+
+
+
+
+#add Try Again? (for typos, or to try to get higher scoring word) -- so basically loops and manual exit option
+#plus Scrabble Cheater because it would be hilariously quick

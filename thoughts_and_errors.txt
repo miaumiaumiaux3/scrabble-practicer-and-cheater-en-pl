@@ -34,3 +34,19 @@ class Player:
     #     self._hand = newhand
 
 ### so yeah we don't need the extra python stuff, but we know about it at least now so that's cool for the future probably
+
+--------------------------------------------------------------------------------------------------------------------------------
+Your hand: ['y', 'i', 'u', 'a', 's', 'a', 't']
+Type a word to score!
+--> sat
+Invalid word... try again
+Your hand: ['y', 'i', 'u', 'a', 's', 'a', 't']
+Type a word to score!
+--> ;elrkah
+Invalid word... try again
+Your hand: ['y', 'i', 'u', 'a', 's', 'a', 't']
+Type a word to score!
+--> sit
+Invalid word... try again
+###WTF WHY IS THIS ERROR -- ah... things is wrong order... BUT NOW ITS POSSIBLE TO HAVE NO VOWELS
+##ok, just had it revalidate after changing vowels
