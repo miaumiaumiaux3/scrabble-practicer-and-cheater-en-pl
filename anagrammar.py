@@ -209,8 +209,8 @@ def start_practice(player, validated_words, play_mode):
     elif play_mode == '3':
         print('Here were all the possible words, sorted from highest to lowest score:')
         print(dict(sorted(validated_words.items(), key=lambda item: item[1], reverse=True)))
-        play_mode = input("2. Play again\n4. Exit program\n--> ")
-        start_practice(player, validated_words, play_mode)
+        play_mode = int(input("1. Play again\n2. Exit program\n--> ")) #it's actually 2 and 4 so we'll convert to int and x*2 to make it work
+        start_practice(player, validated_words, str(play_mode*2)) #omg it worked that looks so clean now when using the program
     
     elif play_mode == '4':
         exit()
