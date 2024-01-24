@@ -1,7 +1,22 @@
-git pull origin main //because i can't just like normally oull for some reason
+git pull origin main //because i can't just like normally pull for some reason
 git checkout -b <branchname> //make new branch
 
 //for emergencies only
 git push origin main
 
 git merge <merge_to> <merge_from>
+
+------------------------------------
+bruh i still keep having random issues with this :<
+we'll save this link for when it inevitable happens again
+https://stackoverflow.com/questions/8840551/configuring-user-and-password-with-git-bash
+
+ok if main is empty, but we make a branch that isn't it gets real grumpy so:
+
+git checkout <branch>
+git branch main <branch> -f
+git checkout main
+git push origin main -f
+
+solves problem: "entirely different commit histories"
+https://stackoverflow.com/questions/23344320/there-isnt-anything-to-compare-nothing-to-compare-branches-are-entirely-diffe

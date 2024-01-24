@@ -40,7 +40,7 @@ class Polish(): #works but WARNING because of cases and genders, there are over 
 
 
 class Player:
-    tilebag = ['if this text is showing, you fucked up'] #shared by all players
+    tilebag = [] #shared by all players
 
     def __init__(self, name ='Player'):
         self.name = name
@@ -103,7 +103,7 @@ def validate_and_score_words(tiles, lexicon):
 
 def deal_entire_hand(player): 
     #print("reshuffling tiles") #debugging
-    #print(f'Your hand: {player1.hand}')
+    #print(f'Your hand: {player1.hand}') #debugging
     if len(player.tilebag) > 0: #if hand already has tiles
         Player.tilebag.extend(player.hand) #put tiles back in tilebag
         player.hand = [] #delete duplicates in hand to make empty hand
@@ -144,13 +144,29 @@ lexicon = create_lexicon()
 ##################################################################
 
 def start_cheating(player):
-    player.hand = list(input("Enter the tiles you want to check words for (? for a blank tile):\n--> "))[:]
+    typed_tiles = input("Enter the tiles you want to check words for (? for a blank tile):\n--> ")
+    #remove punctuation, whitespace, and numbers -- yes this does technically mean people can keyboard smash randomly and get a valid result xD
+    typed_tiles = ''.join(e for e in typed_tiles if e.isalnum() and not e.isdigit())
+
+    player.hand = list(typed_tiles)[:]
     if len(player.hand) > 15:
         print("Too many tiles, that's bigger than the 15x15 board")
-    #add check if all char are valid tiles
+        start_cheating(player)
+    if len(player.hand) == 0:
+        print("You typed zero valid characters, so obviously we can't find words from this. Please try again...")
+        start_cheating(player)
+     
     validated_words = validate_and_score_words(player.hand, lexicon)
-    print('Here are all the possible words, sorted from highest to lowest score:')
-    print(dict(sorted(validated_words.items(), key=lambda item: item[1], reverse=True)))
+    if len(validated_words) == 0:
+        print("No valid words found, probably too few letters")
+    else:
+        print('Here are all the possible words, sorted from highest to lowest score:')
+        print(dict(sorted(validated_words.items(), key=lambda item: item[1], reverse=True)))
+    play_again = input("Would you like to cheat again?\n1. Play again\n2. Exit program\n--> ")
+    if play_again == '1':
+        start_cheating(player)
+    else:
+        exit()
 
 def setup_practice(player):
     validated_words = {}
@@ -160,11 +176,6 @@ def setup_practice(player):
     #print(Player.tilebag)
 
     deal_entire_hand(player)
-
-    #create dict of valid words and scores from the tiles, guarentee at least one valid word
-    # while len(validated_words) == 0:
-    #     deal_entire_hand(player)
-    #     validated_words = validate_and_score_words(player.hand, lexicon)
         
     #make sure hand has between 2-4 vowels, because otherwise the word options are WICKED BORING    
     check_vowels(player)
@@ -199,8 +210,6 @@ def start_practice(player, validated_words, play_mode):
         
         else:
             print('Invalid word... try again')
-            # print('Here were all the possible words, sorted from highest to lowest score:') #only here to debug
-            # print(dict(sorted(validated_words.items(), key=lambda item: item[1], reverse=True)))
             start_practice(player, validated_words, '1')
     
     elif play_mode == '2':
@@ -234,19 +243,5 @@ def start_program():
         start_program()
 
 
-
+#TADA xD
 start_program()
-
-
-        
-
-
-
-
-
-
-
-
-
-#add Try Again? (for typos, or to try to get higher scoring word) -- so basically loops and manual exit option
-#plus Scrabble Cheater because it would be hilariously quick
