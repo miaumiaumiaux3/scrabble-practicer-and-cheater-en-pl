@@ -1,3 +1,5 @@
+//This is my personal cheatsheet because I keep forgetting commands and running into random problems 
+
 git pull origin main //because i can't just like normally pull for some reason
 git checkout -b <branchname> //make new branch
 
