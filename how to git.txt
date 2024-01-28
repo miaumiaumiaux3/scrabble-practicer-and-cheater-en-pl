@@ -11,7 +11,7 @@ bruh i still keep having random issues with this :<
 we'll save this link for when it inevitable happens again
 https://stackoverflow.com/questions/8840551/configuring-user-and-password-with-git-bash
 
-ok if main is empty, but we make a branch that isn't it gets real grumpy so:
+ok if main is empty, but we made a branch that isn't it gets real grumpy so:
 
 git checkout <branch>
 git branch main <branch> -f
