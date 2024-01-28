@@ -59,7 +59,7 @@ def fill_tilebag():
 
 
 def valid_word_checker(tiles, wilds, word):
-    if len(word) > len(tiles): #if the length is wrong, skip everything because obv that's impossible
+    if len(word) > (len(tiles) + wilds): #if the length is wrong, skip everything because obv that's impossible
         return -1
     
     wordscore = 0
@@ -146,9 +146,10 @@ lexicon = create_lexicon()
 def start_cheating(player):
     typed_tiles = input("Enter the tiles you want to check words for (? for a blank tile):\n--> ")
     #remove punctuation, whitespace, and numbers -- yes this does technically mean people can keyboard smash randomly and get a valid result xD
-    typed_tiles = ''.join(e for e in typed_tiles if e.isalnum() and not e.isdigit())
+    typed_tiles = ''.join(e for e in typed_tiles if  e == '?' or (e.isalnum() and not e.isdigit()))
 
-    player.hand = list(typed_tiles)[:]
+    player.hand = list(typed_tiles.lower())[:]
+    print(player.hand)
     if len(player.hand) > 15:
         print("Too many tiles, that's bigger than the 15x15 board")
         start_cheating(player)
@@ -158,7 +159,7 @@ def start_cheating(player):
      
     validated_words = validate_and_score_words(player.hand, lexicon)
     if len(validated_words) == 0:
-        print("No valid words found, probably too few letters")
+        print("No valid words found. Remember that valid words are minimum 2 characters long and have at least 1 non-wild.")
     else:
         print('Here are all the possible words, sorted from highest to lowest score:')
         print(dict(sorted(validated_words.items(), key=lambda item: item[1], reverse=True)))
