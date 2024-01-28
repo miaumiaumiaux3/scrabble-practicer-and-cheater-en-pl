@@ -22,3 +22,9 @@ git push origin main -f
 
 solves problem: "entirely different commit histories"
 https://stackoverflow.com/questions/23344320/there-isnt-anything-to-compare-nothing-to-compare-branches-are-entirely-diffe
+
+
+------------------------------
+fun fact, changing the repo name leads to a small cascade of issues xD
+in this case worth it, but I wouldn't do it again
+
