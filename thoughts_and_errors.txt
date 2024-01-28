@@ -1,0 +1,52 @@
+#current error
+#['e', 'e', 'c', 'b', 'a', 'a', 'd']
+#{'abecedarian': 12, 'abecedarians': 12, <- literally impossible, so why is it passing? do we need to do a length check?
+#for now I'm doing a length check, and if that stops working in a future iteration, I'll come up with another solution
+
+#current error
+#['r', 'm', 'i', 'i', 'i', 'a', 'ł']
+#{'armii': 6, 'ramii': 6, 'amii': 5, 'miar': 5, 'mira': 5, 'rami': 5, 'arii': 4, 'ima': 4, 'mai': 4, 'mar': 4, 'mir': 4, 'ram': 4, 'air': 3, 'am': 3, 'iii': 3, 'im': 3, 'ma': 3, 'mi': 3, 'rai': 3, 'ar': 2, 'ii': 2}
+#where is "miał" ?
+#ERROR INLOVES POLSKI ZNACZKI
+
+#['c', 'ł', 'm', 'a', 'm', 'ź', 'y']
+#{'cyma': 7, 'macy': 7, 'mamy': 7, 'myca': 7, 'cym': 6, 'myc': 6, 'mym': 6, 'mac': 5, 'mam': 5, 'may': 5, 'yam': 5, 'my': 4, 'am': 3, 'ma': 3} 
+#NIE MA ANI ł ANI Ź
+
+#FIX WAS SUPER EASY!! these kinds of character are EXACTLY why it's worth opening the file with encoding = 'utf-8' SOLVED YAYY
+#['ż', 'ó', 'w', 'ź', 'j', 'z', 'w'] 
+#{'wwóź': 16, 'zwóź': 16, 'wóź': 15, 'zwój': 10, 'wwóz': 8, 'zwów': 8, 'wóz': 7, 'ów': 6}
+
+--------------------------------------------------------------------------------------------------------------------------------
+class Player:
+    def __init__(self, name ='Player'):
+        self.name = name
+        self.hand = []
+        
+    #     self._hand = []
+
+    # @property
+    # def hand(self):
+    #     return self._hand
+
+    # @hand.setter
+    # def hand(self, newhand):
+    #     self._hand = newhand
+
+### so yeah we don't need the extra python stuff, but we know about it at least now so that's cool for the future probably
+
+--------------------------------------------------------------------------------------------------------------------------------
+Your hand: ['y', 'i', 'u', 'a', 's', 'a', 't']
+Type a word to score!
+--> sat
+Invalid word... try again
+Your hand: ['y', 'i', 'u', 'a', 's', 'a', 't']
+Type a word to score!
+--> ;elrkah
+Invalid word... try again
+Your hand: ['y', 'i', 'u', 'a', 's', 'a', 't']
+Type a word to score!
+--> sit
+Invalid word... try again
+###WTF WHY IS THIS ERROR -- ah... things is wrong order... BUT NOW ITS POSSIBLE TO HAVE NO VOWELS
+##ok, just had it revalidate after changing vowels
